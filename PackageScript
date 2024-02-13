@@ -48,7 +48,7 @@ with open(os.path.join(builder.buildPath, 'pdblog.txt'), 'wt') as fp:
   for line in pdb_list:
     fp.write(line.path + '\n')
 
-# Add CS2Fixes-specific files
+# Add ZombieMod-specific files
 builder.AddFolder(os.path.join('addons', MMSPlugin.plugin_name, 'data'))
 configs_folder = builder.AddFolder(os.path.join('addons', MMSPlugin.plugin_name, 'configs'))
 zr_folder = builder.AddFolder(os.path.join('addons', MMSPlugin.plugin_name, 'configs', 'zr'))
@@ -58,13 +58,13 @@ gamedata_folder = builder.AddFolder(os.path.join('addons', MMSPlugin.plugin_name
 builder.AddCopy(os.path.join(builder.sourcePath, 'configs', 'admins.cfg.example'), configs_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'configs', 'discordbots.cfg.example'), configs_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'configs', 'maplist.cfg.example'), configs_folder)
-builder.AddCopy(os.path.join(builder.sourcePath, 'cfg', MMSPlugin.plugin_name, 'cs2fixes.cfg'), cfg_folder)
+builder.AddCopy(os.path.join(builder.sourcePath, 'cfg', MMSPlugin.plugin_name, 'zombiemod.cfg'), cfg_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'cfg', MMSPlugin.plugin_name, 'maps', 'de_somemap.cfg'), mapcfg_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'configs', 'zr', 'playerclass.cfg.example'), zr_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'configs', 'zr', 'weapons.cfg.example'), zr_folder)
-builder.AddCopy(os.path.join('gamedata', 'cs2fixes.games.txt'), gamedata_folder)
+builder.AddCopy(os.path.join('gamedata', 'zombiemod.games.txt'), gamedata_folder)
 
-# Add CS2Fixes-specific compiled asset files
+# Add ZombieMod-specific compiled asset files
 particles_cs2f_folder = builder.AddFolder(os.path.join('particles', MMSPlugin.plugin_name))
 builder.AddCopy(os.path.join(builder.sourcePath, 'assets', 'particles', MMSPlugin.plugin_name, 'admin_beacon.vpcf_c'), particles_cs2f_folder)
 builder.AddCopy(os.path.join(builder.sourcePath, 'assets', 'particles', MMSPlugin.plugin_name, 'admin_beacon_inner.vpcf_c'), particles_cs2f_folder)

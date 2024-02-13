@@ -41,12 +41,12 @@ int g_iExtendTimeToAdd = 20;
 float g_flRTVSucceedRatio = 0.6f;
 bool g_bRTVEndRound = false;
 
-FAKE_BOOL_CVAR(cs2f_votemanager_enable, "Whether to enable votemanager features such as RTV and extends", g_bVoteManagerEnable, false, false)
-FAKE_INT_CVAR(cs2f_extends, "Maximum extends per map", g_iExtendsLeft, 1, false)
-FAKE_FLOAT_CVAR(cs2f_extend_success_ratio, "Ratio needed to pass an extend", g_flExtendSucceedRatio, 0.5f, false)
-FAKE_INT_CVAR(cs2f_extend_time, "Time to add per extend", g_iExtendTimeToAdd, 20, false)
-FAKE_FLOAT_CVAR(cs2f_rtv_success_ratio, "Ratio needed to pass RTV", g_flRTVSucceedRatio, 0.6f, false)
-FAKE_BOOL_CVAR(cs2f_rtv_endround, "Whether to immediately end the round when RTV succeeds", g_bRTVEndRound, false, false)
+FAKE_BOOL_CVAR(zm_votemanager_enable, "Whether to enable votemanager features such as RTV and extends", g_bVoteManagerEnable, false, false)
+FAKE_INT_CVAR(zm_extends, "Maximum extends per map", g_iExtendsLeft, 1, false)
+FAKE_FLOAT_CVAR(zm_extend_success_ratio, "Ratio needed to pass an extend", g_flExtendSucceedRatio, 0.5f, false)
+FAKE_INT_CVAR(zm_extend_time, "Time to add per extend", g_iExtendTimeToAdd, 20, false)
+FAKE_FLOAT_CVAR(zm_rtv_success_ratio, "Ratio needed to pass RTV", g_flRTVSucceedRatio, 0.6f, false)
+FAKE_BOOL_CVAR(zm_rtv_endround, "Whether to immediately end the round when RTV succeeds", g_bRTVEndRound, false, false)
 
 int GetCurrentRTVCount()
 {

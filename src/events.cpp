@@ -73,7 +73,7 @@ GAME_EVENT_F(round_prestart)
 
 static bool g_bBlockTeamMessages = false;
 
-FAKE_BOOL_CVAR(cs2f_block_team_messages, "Whether to block team join messages", g_bBlockTeamMessages, false, false)
+FAKE_BOOL_CVAR(zm_block_team_messages, "Whether to block team join messages", g_bBlockTeamMessages, false, false)
 
 GAME_EVENT_F(player_team)
 {
@@ -84,7 +84,7 @@ GAME_EVENT_F(player_team)
 
 static bool g_bNoblock = false;
 
-FAKE_BOOL_CVAR(cs2f_noblock_enable, "Whether to use noblock, which sets debris collision on every player", g_bNoblock, false, false)
+FAKE_BOOL_CVAR(zm_noblock_enable, "Whether to use noblock, which sets debris collision on every player", g_bNoblock, false, false)
 
 GAME_EVENT_F(player_spawn)
 {
@@ -126,7 +126,7 @@ GAME_EVENT_F(player_spawn)
 
 static bool g_bEnableTopDefender = false;
 
-FAKE_BOOL_CVAR(cs2f_topdefender_enable, "Whether to use TopDefender", g_bEnableTopDefender, false, false)
+FAKE_BOOL_CVAR(zm_topdefender_enable, "Whether to use TopDefender", g_bEnableTopDefender, false, false)
 
 GAME_EVENT_F(player_hurt)
 {

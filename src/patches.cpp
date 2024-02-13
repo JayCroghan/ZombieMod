@@ -67,7 +67,7 @@ CMemPatch g_ToolsPatches[] =
 // CONVAR_TODO
 bool g_bEnableMovementUnlocker = true;
 
-CON_COMMAND_F(cs2f_movement_unlocker_enable, "Whether to enable movement unlocker", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
+CON_COMMAND_F(zm_movement_unlocker_enable, "Whether to enable movement unlocker", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
 {
 	if (args.ArgC() < 2)
 	{

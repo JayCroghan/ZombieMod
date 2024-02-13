@@ -69,8 +69,8 @@ void FASTCALL Detour_CGameRules_Constructor(CGameRules *pThis)
 static bool g_bBlockMolotovSelfDmg = false;
 static bool g_bBlockAllDamage = false;
 
-FAKE_BOOL_CVAR(cs2f_block_molotov_self_dmg, "Whether to block self-damage from molotovs", g_bBlockMolotovSelfDmg, false, false)
-FAKE_BOOL_CVAR(cs2f_block_all_dmg, "Whether to block all damage to players", g_bBlockAllDamage, false, false)
+FAKE_BOOL_CVAR(zm_block_molotov_self_dmg, "Whether to block self-damage from molotovs", g_bBlockMolotovSelfDmg, false, false)
+FAKE_BOOL_CVAR(zm_block_all_dmg, "Whether to block all damage to players", g_bBlockAllDamage, false, false)
 
 void FASTCALL Detour_CBaseEntity_TakeDamageOld(Z_CBaseEntity *pThis, CTakeDamageInfo *inputInfo)
 {
@@ -114,7 +114,7 @@ void FASTCALL Detour_CBaseEntity_TakeDamageOld(Z_CBaseEntity *pThis, CTakeDamage
 
 static bool g_bUseOldPush = false;
 
-FAKE_BOOL_CVAR(cs2f_use_old_push, "Whether to use the old CSGO trigger_push behavior", g_bUseOldPush, false, false)
+FAKE_BOOL_CVAR(zm_use_old_push, "Whether to use the old CSGO trigger_push behavior", g_bUseOldPush, false, false)
 
 void FASTCALL Detour_TriggerPush_Touch(CTriggerPush* pPush, Z_CBaseEntity* pOther)
 {
@@ -293,7 +293,7 @@ void SayChatMessageWithTimer(IRecipientFilter &filter, const char *pText, CCSPla
 
 bool g_bEnableTriggerTimer = false;
 
-FAKE_BOOL_CVAR(cs2f_trigger_timer_enable, "Whether to process countdown messages said by Console (e.g. Hold for 10 seconds) and append the round time where the countdown resolves", g_bEnableTriggerTimer, false, false)
+FAKE_BOOL_CVAR(zm_trigger_timer_enable, "Whether to process countdown messages said by Console (e.g. Hold for 10 seconds) and append the round time where the countdown resolves", g_bEnableTriggerTimer, false, false)
 
 void FASTCALL Detour_UTIL_SayTextFilter(IRecipientFilter &filter, const char *pText, CCSPlayerController *pPlayer, uint64 eMessageType)
 {
@@ -398,7 +398,7 @@ void FASTCALL Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSym
 
 bool g_bBlockNavLookup = false;
 
-FAKE_BOOL_CVAR(cs2f_block_nav_lookup, "Whether to block navigation mesh lookup, improves server performance but breaks bot navigation", g_bBlockNavLookup, false, false)
+FAKE_BOOL_CVAR(zm_block_nav_lookup, "Whether to block navigation mesh lookup, improves server performance but breaks bot navigation", g_bBlockNavLookup, false, false)
 
 void* FASTCALL Detour_CNavMesh_GetNearestNavArea(int64_t unk1, float* unk2, unsigned int* unk3, unsigned int unk4, int64_t unk5, int64_t unk6, float unk7, int64_t unk8)
 {
@@ -410,7 +410,7 @@ void* FASTCALL Detour_CNavMesh_GetNearestNavArea(int64_t unk1, float* unk2, unsi
 
 bool g_bFixLagCompCrash = false;
 
-FAKE_BOOL_CVAR(cs2f_fix_lag_comp_crash, "Whether to fix lag compensation crash with env_entity_maker", g_bFixLagCompCrash, false, false)
+FAKE_BOOL_CVAR(zm_fix_lag_comp_crash, "Whether to fix lag compensation crash with env_entity_maker", g_bFixLagCompCrash, false, false)
 
 void FASTCALL Detour_FixLagCompEntityRelationship(void *a1, CEntityInstance *pEntity, bool a3)
 {

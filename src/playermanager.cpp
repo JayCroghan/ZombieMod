@@ -17,7 +17,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <../cs2fixes.h>
+#include <../zombiemod.h>
 #include "utlstring.h"
 #include "playermanager.h"
 #include "adminsystem.h"
@@ -86,9 +86,9 @@ static bool g_bFlashLightShadows = true;
 static float g_flFlashLightDistance = 54.0f; // The minimum distance such that an awp wouldn't block the light
 static std::string g_sFlashLightAttachment = "axis_of_intent";
 
-FAKE_BOOL_CVAR(cs2f_flashlight_shadows, "Whether to enable flashlight shadows", g_bFlashLightShadows, true, false)
-FAKE_FLOAT_CVAR(cs2f_flashlight_distance, "How far flashlights should be from the player's head", g_flFlashLightDistance, 54.0f, false)
-FAKE_STRING_CVAR(cs2f_flashlight_attachment, "Which attachment to parent a flashlight to", g_sFlashLightAttachment, false)
+FAKE_BOOL_CVAR(zm_flashlight_shadows, "Whether to enable flashlight shadows", g_bFlashLightShadows, true, false)
+FAKE_FLOAT_CVAR(zm_flashlight_distance, "How far flashlights should be from the player's head", g_flFlashLightDistance, 54.0f, false)
+FAKE_STRING_CVAR(zm_flashlight_attachment, "Which attachment to parent a flashlight to", g_sFlashLightAttachment, false)
 
 void ZEPlayer::SpawnFlashLight()
 {
@@ -152,9 +152,9 @@ static float g_flFloodInterval = 0.75f;
 static int g_iMaxFloodTokens = 3;
 static float g_flFloodCooldown = 3.0f;
 
-FAKE_FLOAT_CVAR(cs2f_flood_interval, "Amount of time allowed between chat messages acquiring flood tokens", g_flFloodInterval, 0.75f, false)
-FAKE_INT_CVAR(cs2f_max_flood_tokens, "Maximum number of flood tokens allowed before chat messages are blocked", g_iMaxFloodTokens, 3, false)
-FAKE_FLOAT_CVAR(cs2f_flood_cooldown, "Amount of time to block messages for when a player floods", g_flFloodCooldown, 3.0f, false)
+FAKE_FLOAT_CVAR(zm_flood_interval, "Amount of time allowed between chat messages acquiring flood tokens", g_flFloodInterval, 0.75f, false)
+FAKE_INT_CVAR(zm_max_flood_tokens, "Maximum number of flood tokens allowed before chat messages are blocked", g_iMaxFloodTokens, 3, false)
+FAKE_FLOAT_CVAR(zm_flood_cooldown, "Amount of time to block messages for when a player floods", g_flFloodCooldown, 3.0f, false)
 
 bool ZEPlayer::IsFlooding()
 {
@@ -300,7 +300,7 @@ void CPlayerManager::CheckInfractions()
 
 static bool g_bFlashLightEnable = false;
 
-FAKE_BOOL_CVAR(cs2f_flashlight_enable, "Whether to enable flashlights", g_bFlashLightEnable, false, false)
+FAKE_BOOL_CVAR(zm_flashlight_enable, "Whether to enable flashlights", g_bFlashLightEnable, false, false)
 
 void CPlayerManager::FlashLightThink()
 {
@@ -324,7 +324,7 @@ void CPlayerManager::FlashLightThink()
 
 static bool g_bHideTeammatesOnly = false;
 
-FAKE_BOOL_CVAR(cs2f_hide_teammates_only, "Whether to hide teammates only", g_bHideTeammatesOnly, false, false)
+FAKE_BOOL_CVAR(zm_hide_teammates_only, "Whether to hide teammates only", g_bHideTeammatesOnly, false, false)
 
 void CPlayerManager::CheckHideDistances()
 {
@@ -383,7 +383,7 @@ void CPlayerManager::CheckHideDistances()
 }
 
 static bool g_bInfiniteAmmo = false;
-FAKE_BOOL_CVAR(cs2f_infinite_reserve_ammo, "Whether to enable infinite reserve ammo on weapons", g_bInfiniteAmmo, false, false)
+FAKE_BOOL_CVAR(zm_infinite_reserve_ammo, "Whether to enable infinite reserve ammo on weapons", g_bInfiniteAmmo, false, false)
 
 void CPlayerManager::SetupInfiniteAmmo()
 {

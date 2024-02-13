@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "cs2fixes.h"
+#include "zombiemod.h"
 #undef snprintf
 #include "vendor/nlohmann/json_fwd.hpp"
 #include <steam/steam_gameserver.h>

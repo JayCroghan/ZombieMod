@@ -47,7 +47,7 @@
     <ClCompile Include="src\cs2_sdk\schema.cpp">
       <Filter>Source Files\cs2_sdk</Filter>
     </ClCompile>
-    <ClCompile Include="src\cs2fixes.cpp">
+    <ClCompile Include="src\ZombieMod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\plat_win.cpp">
@@ -119,6 +119,9 @@
     <ClCompile Include="sdk\entity2\entitykeyvalues.cpp">
       <Filter>Source Files\sdk</Filter>
     </ClCompile>
+    <ClCompile Include="sdk\public\tier0\memoverride.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mempatch.h">
@@ -163,7 +166,7 @@
     <ClInclude Include="src\cs2_sdk\entity\cbasemodelentity.h">
       <Filter>Header Files\cs2_sdk\entity</Filter>
     </ClInclude>
-    <ClInclude Include="src\cs2fixes.h">
+    <ClInclude Include="src\zombiemod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\plat.h">
@@ -240,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="src\cs2_sdk\entity\cparticlesystem.h">
       <Filter>Header Files\cs2_sdk\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cs2_sdk\cschemasystem.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

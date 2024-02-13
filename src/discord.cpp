@@ -34,7 +34,7 @@ CDiscordBotManager* g_pDiscordBotManager = nullptr;
 // TODO: CVAR
 static bool g_bDebugDiscordRequests = false;
 
-CON_COMMAND_F(cs2f_debug_discord_messages, "Whether to include debug information for Discord requests.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
+CON_COMMAND_F(zm_debug_discord_messages, "Whether to include debug information for Discord requests.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
 {
 	if (args.ArgC() < 2)
 		Msg("%s %i\n", args[0], g_bDebugDiscordRequests);

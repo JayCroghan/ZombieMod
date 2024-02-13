@@ -90,7 +90,7 @@ WeaponMapEntry_t WeaponMap[] = {
 
 bool g_bEnableWeapons = false;
 
-FAKE_BOOL_CVAR(cs2f_weapons_enable, "Whether to enable weapon commands", g_bEnableWeapons, false, false)
+FAKE_BOOL_CVAR(zm_weapons_enable, "Whether to enable weapon commands", g_bEnableWeapons, false, false)
 
 void ParseWeaponCommand(const CCommand& args, CCSPlayerController* player)
 {
@@ -304,7 +304,7 @@ void ClientPrint(CBasePlayerController *player, int hud_dest, const char *msg, .
 
 bool g_bEnableStopSound = false;
 
-FAKE_BOOL_CVAR(cs2f_stopsound_enable, "Whether to enable stopsound", g_bEnableStopSound, false, false)
+FAKE_BOOL_CVAR(zm_stopsound_enable, "Whether to enable stopsound", g_bEnableStopSound, false, false)
 
 CON_COMMAND_CHAT(stopsound, "- toggle weapon sounds")
 {
@@ -347,9 +347,9 @@ bool g_bEnableHide = false;
 static int g_iDefaultHideDistance = 250;
 static int g_iMaxHideDistance = 2000;
 
-FAKE_BOOL_CVAR(cs2f_hide_enable, "Whether to enable hide", g_bEnableHide, false, false)
-FAKE_INT_CVAR(cs2f_hide_distance_default, "The default distance for hide", g_iDefaultHideDistance, 250, false)
-FAKE_INT_CVAR(cs2f_hide_distance_max, "The max distance for hide", g_iMaxHideDistance, 2000, false)
+FAKE_BOOL_CVAR(zm_hide_enable, "Whether to enable hide", g_bEnableHide, false, false)
+FAKE_INT_CVAR(zm_hide_distance_default, "The default distance for hide", g_iDefaultHideDistance, 250, false)
+FAKE_INT_CVAR(zm_hide_distance_max, "The max distance for hide", g_iMaxHideDistance, 2000, false)
 
 CON_COMMAND_CHAT(hide, "<distance> - hides nearby players")
 {

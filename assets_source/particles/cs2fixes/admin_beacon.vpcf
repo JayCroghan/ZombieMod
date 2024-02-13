@@ -605,7 +605,7 @@
 	m_Children = 
 	[
 		{
-			m_ChildRef = resource:"particles/cs2fixes/admin_beacon_inner.vpcf"
+			m_ChildRef = resource:"particles/ZombieMod/admin_beacon_inner.vpcf"
 		},
 	]
 }

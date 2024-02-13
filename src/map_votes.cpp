@@ -46,7 +46,7 @@ CON_COMMAND_CHAT_FLAGS(reload_map_list, "- Reload map list", ADMFLAG_ROOT)
 	Message("Map list reloaded\n");
 }
 
-CON_COMMAND_F(cs2f_vote_maps_cooldown, "Number of maps to wait until a map can be voted / nominated again i.e. cooldown.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
+CON_COMMAND_F(zm_vote_maps_cooldown, "Number of maps to wait until a map can be voted / nominated again i.e. cooldown.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
 {
 	if (!g_pMapVoteSystem) {
 		Message("The map vote subsystem is not enabled.");
@@ -61,7 +61,7 @@ CON_COMMAND_F(cs2f_vote_maps_cooldown, "Number of maps to wait until a map can b
 	}
 }
 
-CON_COMMAND_F(cs2f_vote_max_nominations, "Number of nominations to include per vote, out of a maximum of 10.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
+CON_COMMAND_F(zm_vote_max_nominations, "Number of nominations to include per vote, out of a maximum of 10.", FCVAR_LINKED_CONCOMMAND | FCVAR_SPONLY)
 {
 	if (!g_pMapVoteSystem) {
 		Message("The map vote subsystem is not enabled.");

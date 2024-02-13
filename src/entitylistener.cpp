@@ -19,7 +19,7 @@
 
 #include "entitylistener.h"
 #include "common.h"
-#include "cs2fixes.h"
+#include "zombiemod.h"
 #include "gameconfig.h"
 #include "cs2_sdk/entity/cbaseentity.h"
 #include "plat.h"

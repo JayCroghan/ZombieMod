@@ -25,7 +25,7 @@ jobs:
     name: Build
     runs-on: ${{ matrix.os }}
     env:
-        HL2SDKCS2: ${{ github.workspace }}/CS2Fixes/sdk
+        HL2SDKCS2: ${{ github.workspace }}/ZombieMod/sdk
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
@@ -39,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: CS2Fixes
+          path: ZombieMod
           submodules: recursive
 
       - name: Checkout Metamod
@@ -61,7 +61,7 @@ jobs:
           cd ambuild && python setup.py install && cd ..
 
       - name: Build
-        working-directory: CS2Fixes
+        working-directory: ZombieMod
         shell: bash
         run: |
           mkdir build && cd build
@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}
-          path: CS2Fixes/build/package
+          path: ZombieMod/build/package
 
   release:
     name: Release
