@@ -209,19 +209,20 @@ public:
 	void LoadPlayerClass(EZRGameMode gameMode = EZRGameMode::GAMEMODE_ZR);
 	void ApplyBaseClassVisuals(std::shared_ptr<ZRClass> pClass, CCSPlayerPawn* pPawn);
 	std::shared_ptr<ZRHumanClass> GetHumanClass(const char* pszClassName);
-	void ApplyHumanClass(std::shared_ptr<ZRHumanClass> pClass, CCSPlayerPawn* pPawn);
-	void ApplyPreferredOrDefaultHumanClass(CCSPlayerPawn* pPawn);
+	void ApplyHumanClass(std::shared_ptr<ZRHumanClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity = false);
+	void ApplyPreferredOrDefaultHumanClass(CCSPlayerPawn* pPawn, bool onlyGravity = false);
+	void ResetGravity(ZEPlayer* pPlayer, CCSPlayerPawn* pPawn);
 	void ApplyPreferredOrDefaultHumanClassVisuals(CCSPlayerPawn* pPawn);
 	std::shared_ptr<ZRZombieClass> GetZombieClass(const char* pszClassName);
-	void ApplyZombieClass(std::shared_ptr<ZRZombieClass> pClass, CCSPlayerPawn* pPawn);
-	void ApplyPreferredOrDefaultZombieClass(CCSPlayerPawn* pPawn);
+	void ApplyZombieClass(std::shared_ptr<ZRZombieClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity = false);
+	void ApplyPreferredOrDefaultZombieClass(CCSPlayerPawn* pPawn, bool onlyGravity = false);
 	void PrecacheModels(IEntityResourceManifest* pResourceManifest);
 	void GetZRClassList(int iTeam, std::vector<std::shared_ptr<ZRClass>>& vecClasses, CCSPlayerController* pController = nullptr);
 	void CreateRegenTimer(int iPlayerSlot, CHandle<CCSPlayerPawn> hPawn, float flInterval, int iAmount);
 	void CancelRegenTimer(int iPlayerSlot);
 
 private:
-	void ApplyBaseClass(std::shared_ptr<ZRClass> pClass, CCSPlayerPawn* pPawn);
+	void ApplyBaseClass(std::shared_ptr<ZRClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity = false);
 	std::vector<std::shared_ptr<ZRZombieClass>> m_vecZombieDefaultClass;
 	std::vector<std::shared_ptr<ZRHumanClass>> m_vecHumanDefaultClass;
 	std::map<uint32, std::shared_ptr<ZRZombieClass>> m_ZombieClassMap;

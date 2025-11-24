@@ -481,21 +481,28 @@ void split(const std::string& s, char delim, Out result)
 		*result++ = item;
 }
 
-void CZRPlayerClassManager::ApplyBaseClass(std::shared_ptr<ZRClass> pClass, CCSPlayerPawn* pPawn)
+void CZRPlayerClassManager::ApplyBaseClass(std::shared_ptr<ZRClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity)
 {
-	pPawn->m_iMaxHealth = pClass->iHealth;
-	pPawn->m_iHealth = pClass->iHealth;
+	if (!onlyGravity)
+	{
+		pPawn->m_iMaxHealth = pClass->iHealth;
+		pPawn->m_iHealth = pClass->iHealth;
+	}
+
 	pPawn->SetGravityScale(pClass->flGravity);
 
-	// I don't know why, I don't want to know why,
-	// I shouldn't have to wonder why, but for whatever reason
-	// this shit caused crashes on ROUND END or MAP CHANGE after the 26/04/2024 update
-	// pPawn->m_flVelocityModifier = pClass->flSpeed;
-	const auto pController = reinterpret_cast<CCSPlayerController*>(pPawn->GetController());
-	if (const auto pPlayer = pController != nullptr ? pController->GetZEPlayer() : nullptr)
-		pPlayer->SetMaxSpeed(pClass->flSpeed);
+	if (!onlyGravity)
+	{
+		// I don't know why, I don't want to know why,
+		// I shouldn't have to wonder why, but for whatever reason
+		// this shit caused crashes on ROUND END or MAP CHANGE after the 26/04/2024 update
+		// pPawn->m_flVelocityModifier = pClass->flSpeed;
+		const auto pController = reinterpret_cast<CCSPlayerController*>(pPawn->GetController());
+		if (const auto pPlayer = pController != nullptr ? pController->GetZEPlayer() : nullptr)
+			pPlayer->SetMaxSpeed(pClass->flSpeed);
 
-	ApplyBaseClassVisuals(pClass, pPawn);
+		ApplyBaseClassVisuals(pClass, pPawn);
+	}
 }
 
 // only changes that should not (directly) affect gameplay
@@ -530,31 +537,51 @@ std::shared_ptr<ZRHumanClass> CZRPlayerClassManager::GetHumanClass(const char* p
 	return m_HumanClassMap[nameHash];
 }
 
-void CZRPlayerClassManager::ApplyHumanClass(std::shared_ptr<ZRHumanClass> pClass, CCSPlayerPawn* pPawn)
+void CZRPlayerClassManager::ApplyHumanClass(std::shared_ptr<ZRHumanClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity)
 {
-	ApplyBaseClass(pClass, pPawn);
-	CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
-
-	if (!pController)
-		return;
-
-	CancelRegenTimer(pController->GetPlayerSlot());
-	ZEPlayer* pPlayer = g_playerManager->GetPlayer(pController->GetPlayerSlot());
-
-	if (g_cvarEnableLeader.Get() && pPlayer && pPlayer->IsLeader())
+	if (onlyGravity)
 	{
-		CHandle<CCSPlayerPawn> hPawn = pPawn->GetHandle();
+		ApplyBaseClass(pClass, pPawn, onlyGravity);
+	}
+	else
+	{
+		ApplyBaseClass(pClass, pPawn);
+		CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
 
-		CTimer::Create(0.02f, TIMERFLAG_MAP | TIMERFLAG_ROUND, [hPawn]() {
-			CCSPlayerPawn* pPawn = hPawn.Get();
-			if (pPawn)
-				Leader_ApplyLeaderVisuals(pPawn);
-			return -1.0f;
-		});
+		if (!pController)
+			return;
+
+		CancelRegenTimer(pController->GetPlayerSlot());
+		ZEPlayer* pPlayer = g_playerManager->GetPlayer(pController->GetPlayerSlot());
+
+		if (g_cvarEnableLeader.Get() && pPlayer && pPlayer->IsLeader())
+		{
+			CHandle<CCSPlayerPawn> hPawn = pPawn->GetHandle();
+
+			CTimer::Create(0.02f, TIMERFLAG_MAP | TIMERFLAG_ROUND, [hPawn]() {
+				CCSPlayerPawn* pPawn = hPawn.Get();
+				if (pPawn)
+					Leader_ApplyLeaderVisuals(pPawn);
+				return -1.0f;
+			});
+		}
 	}
 }
 
-void CZRPlayerClassManager::ApplyPreferredOrDefaultHumanClass(CCSPlayerPawn* pPawn)
+void CZRPlayerClassManager::ResetGravity(ZEPlayer* pPlayer, CCSPlayerPawn *pPawn)
+{
+	Message("Resetting gravity for player.\n");
+	if (pPlayer && pPawn && pPlayer->IsInfected())
+	{
+		ApplyPreferredOrDefaultZombieClass(pPawn, true);
+	}
+	else if (pPlayer && pPawn && !pPlayer->IsInfected())
+	{
+		ApplyPreferredOrDefaultHumanClass(pPawn, true);
+	}
+}
+
+void CZRPlayerClassManager::ApplyPreferredOrDefaultHumanClass(CCSPlayerPawn* pPawn, bool onlyGravity)
 {
 	CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
 	if (!pController) return;
@@ -580,7 +607,7 @@ void CZRPlayerClassManager::ApplyPreferredOrDefaultHumanClass(CCSPlayerPawn* pPa
 		return;
 	}
 
-	ApplyHumanClass(humanClass, pPawn);
+	ApplyHumanClass(humanClass, pPawn, onlyGravity);
 }
 
 void CZRPlayerClassManager::ApplyPreferredOrDefaultHumanClassVisuals(CCSPlayerPawn* pPawn)
@@ -622,16 +649,23 @@ std::shared_ptr<ZRZombieClass> CZRPlayerClassManager::GetZombieClass(const char*
 	return m_ZombieClassMap[nameHash];
 }
 
-void CZRPlayerClassManager::ApplyZombieClass(std::shared_ptr<ZRZombieClass> pClass, CCSPlayerPawn* pPawn)
+void CZRPlayerClassManager::ApplyZombieClass(std::shared_ptr<ZRZombieClass> pClass, CCSPlayerPawn* pPawn, bool onlyGravity)
 {
-	ApplyBaseClass(pClass, pPawn);
-	CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
+	if (onlyGravity)
+	{
+		ApplyBaseClass(pClass, pPawn, onlyGravity);
+	}
+	else
+	{
+		ApplyBaseClass(pClass, pPawn);
+		CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
 
-	if (pController)
-		CreateRegenTimer(pController->GetPlayerSlot(), pPawn->GetHandle(), pClass->flHealthRegenInterval, pClass->iHealthRegenCount);
+		if (pController)
+			CreateRegenTimer(pController->GetPlayerSlot(), pPawn->GetHandle(), pClass->flHealthRegenInterval, pClass->iHealthRegenCount);
+	}
 }
 
-void CZRPlayerClassManager::ApplyPreferredOrDefaultZombieClass(CCSPlayerPawn* pPawn)
+void CZRPlayerClassManager::ApplyPreferredOrDefaultZombieClass(CCSPlayerPawn* pPawn, bool onlyGravity)
 {
 	CCSPlayerController* pController = CCSPlayerController::FromPawn(pPawn);
 	if (!pController) return;
@@ -657,7 +691,7 @@ void CZRPlayerClassManager::ApplyPreferredOrDefaultZombieClass(CCSPlayerPawn* pP
 		return;
 	}
 
-	ApplyZombieClass(zombieClass, pPawn);
+	ApplyZombieClass(zombieClass, pPawn, onlyGravity);
 }
 
 void CZRPlayerClassManager::GetZRClassList(int iTeam, std::vector<std::shared_ptr<ZRClass>>& vecClasses, CCSPlayerController* pController)

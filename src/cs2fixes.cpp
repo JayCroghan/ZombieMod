@@ -1010,6 +1010,34 @@ void CS2Fixes::Hook_GameFramePost(bool simulating, bool bFirstTick, bool bLastTi
 
 	RunTimers();
 	EntityHandler_OnGameFramePost(simulating, GetGlobals()->tickcount);
+
+	CheckForLadderExits();
+}
+
+static bool g_pOnLadder[MAXPLAYERS + 1] = {false};
+
+void CS2Fixes::CheckForLadderExits()
+{
+	if (g_cvarZMEnable.Get() || g_cvarEnableZR.Get())
+	{
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			ZEPlayer* pPlayer = g_playerManager->GetPlayer(i);
+
+			if (!pPlayer || pPlayer->IsFakeClient() || !pPlayer->IsAuthenticated())
+				continue;
+
+			auto slot = pPlayer->GetPlayerSlot();
+			CCSPlayerController* pTarget = CCSPlayerController::FromSlot(slot);
+			CCSPlayerPawn* pPawn = (CCSPlayerPawn*)pTarget->GetPawn();
+			auto movetype = pPawn->m_MoveType();
+			if (g_pOnLadder[i] && movetype != MOVETYPE_LADDER)
+			{
+				g_pZRPlayerClassManager->ResetGravity(pPlayer, pPawn);
+			}
+			g_pOnLadder[i] = (movetype == MOVETYPE_LADDER);
+		}
+	}
 }
 
 void CS2Fixes::Hook_CheckTransmit(CCheckTransmitInfo** ppInfoList, int infoCount, CBitVec<16384>& unionTransmitEdicts,

@@ -100,6 +100,7 @@ public: // hooks
 	void Hook_GoToIntermission(bool bAbortedMatch);
 	bool Hook_OnTakeDamage_Alive(CTakeDamageResult* pDamageResult);
 	void Hook_PhysicsTouchShuffle(CUtlVector<TouchLinked_t>* pList, bool unknown);
+	void Hook_LadderMove();
 #ifdef PLATFORM_WINDOWS
 	Vector* Hook_GetEyePosition(Vector*);
 	QAngle* Hook_GetEyeAngles(QAngle*);
@@ -111,6 +112,8 @@ public: // hooks
 	void Hook_DropWeaponPost(CBasePlayerWeapon* pWeapon, Vector* pVecTarget, Vector* pVelocity);
 	int Hook_LoadEventsFromFile(const char* filename, bool bSearchAll);
 	void Hook_SetGameSpawnGroupMgr(IGameSpawnGroupMgr* pSpawnGroupMgr);
+
+	void CheckForLadderExits();
 
 public: // MetaMod API
 	void* OnMetamodQuery(const char* iface, int* ret);

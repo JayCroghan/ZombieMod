@@ -1064,7 +1064,6 @@ void ZM_CCSPlayer_WeaponServices_EquipWeapon(CCSPlayer_WeaponServices* pWeaponSe
 	{
 		if (pWeapon && pWeapon->GetWeaponVData() && (pWeapon->GetWeaponVData()->m_GearSlot() == GEAR_SLOT_RIFLE || pWeapon->GetWeaponVData()->m_GearSlot() == GEAR_SLOT_PISTOL))
 		{
-			Message("Equip weapon we are changing ammo: %s\n", pWeapon->GetClassname());
 			int ammo = g_cvarZMInfiniteAmmoTotal.Get();
 			pWeapon->GetWeaponVData()->m_nPrimaryReserveAmmoMax() = ammo;
 			pWeapon->GetWeaponVData()->m_iMaxClip1() = ammo;
