@@ -238,10 +238,10 @@ void ZM_SetupCTeams()
 void ZM_OnRoundStart(IGameEvent* pEvent)
 {
 	ZM_SetupRespawnToggler();
-	ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "The game is \x05Humans vs. Zombies\x01, the goal for zombies is to infect all humans by knifing them.");
+	// ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "The game is \x05Humans vs. Zombies\x01, the goal for zombies is to infect all humans by knifing them.");
 
-	if (g_cvarZMInfectSpawnWarning.Get() && g_cvarZMInfectSpawnType.Get() == (int)EZMSpawnType::ZM_IN_PLACE)
-		ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "Classic spawn is enabled! Zombies will be \x07spawning between humans\x01!");
+	// if (g_cvarZMInfectSpawnWarning.Get() && g_cvarZMInfectSpawnType.Get() == (int)EZMSpawnType::ZM_IN_PLACE)
+	// 	ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "Classic spawn is enabled! Zombies will be \x07spawning between humans\x01!");
 
 	if (!GetGlobals())
 		return;
@@ -705,7 +705,7 @@ void ZM_InitialInfection()
 		g_bRespawnEnabled = false;
 
 	SendHudMessageAll(4, EHudPriority::InfectionCountdown, "First infection has started!");
-	ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "First infection has started! Good luck, survivors!");
+	// ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "First infection has started! Good luck, survivors!");
 	g_ZMRoundState = EZMRoundState::POST_INFECTION;
 }
 
@@ -740,8 +740,8 @@ void ZM_StartInitialCountdown()
 
 			SendHudMessageAll(2, EHudPriority::InfectionCountdown, "%sFirst infection in <span color='#00FF00'>%i %s</span>!", classicSpawnMsg, g_iInfectionCountDown, g_iInfectionCountDown == 1 ? "second" : "seconds");
 
-			if (g_iInfectionCountDown % 5 == 0)
-				ClientPrintAll(HUD_PRINTTALK, "%sFirst infection in \7%i %s\1!", ZM_PREFIX, g_iInfectionCountDown, g_iInfectionCountDown == 1 ? "second" : "seconds");
+			// if (g_iInfectionCountDown % 5 == 0)
+			// 	ClientPrintAll(HUD_PRINTTALK, "%sFirst infection in \7%i %s\1!", ZM_PREFIX, g_iInfectionCountDown, g_iInfectionCountDown == 1 ? "second" : "seconds");
 		}
 		(*iSecondsElapsed)++;
 
