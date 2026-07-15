@@ -60,9 +60,10 @@ static CHandle<CTeam> g_hTeamT;
 extern CZRPlayerClassManager* g_pZRPlayerClassManager;
 extern ZRWeaponConfig* g_pZRWeaponConfig;
 extern ZRHitgroupConfig* g_pZRHitgroupConfig;
+extern std::vector<ZEPlayerHandle> g_MotherZombies;
 
 CConVar<bool> g_cvarZMEnable("zm_enable", (FCVAR_REPLICATED | FCVAR_SPONLY | FCVAR_NOTIFY), "ZombieMod enabled or not.", false, ConVarZMEnableChange);
-CConVar<CUtlString> g_cvarZMVersion("zm_version", (FCVAR_REPLICATED | FCVAR_SPONLY | FCVAR_NOTIFY), "ZombieMod version", "4.1.0");
+CConVar<CUtlString> g_cvarZMVersion("zm_version", (FCVAR_REPLICATED | FCVAR_SPONLY | FCVAR_NOTIFY), "ZombieMod version", "4.2.0");
 CConVar<CUtlString> g_cvarZMHumanWinOverlayParticle("zm_human_win_overlay_particle", FCVAR_NONE, "Screenspace particle to display when human win", "");
 CConVar<CUtlString> g_cvarZMZombieWinOverlayParticle("zm_zombie_win_overlay_particle", FCVAR_NONE, "Screenspace particle to display when zombie win", "");
 CConVar<int> g_cvarZMInfectSpawnType("zm_infect_spawn_type", FCVAR_NONE, "Type of Mother Zombies Spawn [0 = MZ spawn where they stand, 1 = MZ get teleported back to spawn on being picked]", (int)EZMSpawnType::ZM_RESPAWN, true, 0, true, 1);
@@ -215,6 +216,8 @@ void ZM_OnRoundPrestart(IGameEvent* pEvent)
 		if (pPawn)
 			pPawn->m_bTakesDamage = false;
 	}
+
+	g_MotherZombies.clear();
 }
 
 void ZM_SetupRespawnToggler()
@@ -593,6 +596,8 @@ void ZM_InfectMotherZombie(CCSPlayerController* pVictimController, std::vector<S
 
 	ZEPlayerHandle hPlayer = pZEPlayer->GetHandle();
 	CTimer::Create(rand() % (int)g_cvarZMMoanInterval.Get(), TIMERFLAG_MAP | TIMERFLAG_ROUND, [hPlayer]() { return ZM_MoanTimer(hPlayer); });
+
+	g_MotherZombies.push_back(hPlayer);
 }
 
 // make players who've been picked as MZ recently less likely to be picked again
@@ -847,7 +852,7 @@ AcquireResult ZM_Detour_CCSPlayer_ItemServices_CanAcquire(CCSPlayer_ItemServices
 	return AcquireResult::Allowed;
 }
 
-bool ZM_Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSymbolLarge* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value, int nOutputID)
+bool ZM_Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSymbolLarge* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value)
 {
 	const char* inputName = pInputName->String();
 
@@ -905,7 +910,7 @@ bool ZM_Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSymbolLar
 	else
 		return true;
 
-	ClientPrintAll(HUD_PRINTTALK, ZR_PREFIX "Respawning is %s!", g_bRespawnEnabled ? "enabled" : "disabled");
+	ClientPrintAll(HUD_PRINTTALK, ZM_PREFIX "Respawning is %s!", g_bRespawnEnabled ? "enabled" : "disabled");
 	return true;
 }
 
@@ -1201,16 +1206,19 @@ void ZM_CCSPlayer_WeaponServices_EquipWeapon(CCSPlayer_WeaponServices* pWeaponSe
 
 void ZM_PostEventAbstract_SosStartSoundEvent(const uint64* pClients, CNetMessagePB<CMsgSosStartSoundEvent>* pMsg)
 {
+	static uint32 screamHash;
 	static std::set<uint32> soundEventHashes;
 
 	ExecuteOnce(
-		soundEventHashes.insert(GetSoundEventHash("zr.amb.scream"));
+		screamHash = GetSoundEventHash("zr.amb.scream");
 		soundEventHashes.insert(GetSoundEventHash("zr.amb.zombie_die"));
 		soundEventHashes.insert(GetSoundEventHash("zr.amb.zombie_pain"));
 		soundEventHashes.insert(GetSoundEventHash("zr.amb.zombie_voice_idle")););
 
 	// Filter out people with zsounds disabled from hearing this sound
-	if (soundEventHashes.contains(pMsg->soundevent_hash()))
+	if (pMsg->soundevent_hash() == screamHash)
+		*(uint64*)pClients &= g_playerManager->GetZSoundsInfectMask();
+	else if (soundEventHashes.contains(pMsg->soundevent_hash()))
 		*(uint64*)pClients &= g_playerManager->GetZSoundsMask();
 }
 
@@ -1361,16 +1369,30 @@ CON_COMMAND_CHAT(zmsounds, "- Toggle zombie sounds")
 {
 	if (!player)
 	{
-		ClientPrint(player, HUD_PRINTCONSOLE, ZR_PREFIX "You cannot use this command from the server console.");
+		ClientPrint(player, HUD_PRINTCONSOLE, ZM_PREFIX "You cannot use this command from the server console.");
 		return;
 	}
 
 	int iPlayer = player->GetPlayerSlot();
-	bool bSet = !g_playerManager->IsPlayerUsingZSounds(iPlayer);
+	EZSoundsType state = g_playerManager->GetPlayerZSoundsMode(iPlayer);
 
-	g_playerManager->SetPlayerZSounds(iPlayer, bSet);
+	if (state == EZSoundsType::ON)
+	{
+		state = EZSoundsType::INFECT_ONLY;
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "Zombie sounds\x04 enabled\x10 (Infect sounds only).");
+	}
+	else if (state == EZSoundsType::INFECT_ONLY)
+	{
+		state = EZSoundsType::OFF;
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "Zombie sounds\x07 disabled.");
+	}
+	else if (state == EZSoundsType::OFF)
+	{
+		state = EZSoundsType::ON;
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "Zombie sounds\x04 enabled.");
+	}
 
-	ClientPrint(player, HUD_PRINTTALK, ZR_PREFIX "You have %s zombie sounds.", bSet ? "enabled" : "disabled");
+	g_playerManager->SetPlayerZSounds(iPlayer, state);
 }
 
 void ConVarZMEnableChange(CConVar<bool>* cvar, CSplitScreenSlot nSlot, const bool* pNewValue, const bool* pOldValue)
@@ -1701,4 +1723,53 @@ CON_COMMAND_CHAT_FLAGS(zmrevive, "- Revive a player", ADMFLAG_GENERIC)
 	}
 	if (iNumClients > 1)
 		PrintMultiAdminAction(nType, strCommandPlayerName, "revived", "", ZM_PREFIX);
+}
+
+void ZMMotherZombiesCommand(CCSPlayerController* player)
+{
+	if (g_ZRRoundState == EZRRoundState::ROUND_START || g_MotherZombies.size() == 0)
+	{
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "There are no mother zombies.");
+		return;
+	}
+
+	bool first = true;
+	std::string names = "";
+	for (int i = g_MotherZombies.size() - 1; i >= 0; i--)
+	{
+		if (!g_MotherZombies[i].IsValid())
+		{
+			g_MotherZombies.erase(g_MotherZombies.begin() + i);
+			continue;
+		}
+
+		CCSPlayerController* pMZ = CCSPlayerController::FromSlot(g_MotherZombies[i].GetPlayerSlot());
+		if (!pMZ)
+			continue;
+
+		if (first)
+		{
+			names = pMZ->GetPlayerName();
+			first = false;
+		}
+		else
+		{
+			names += ", " + pMZ->GetPlayerName();
+		}
+	}
+
+	if (first)
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "There are no mother zombies.");
+	else
+		ClientPrint(player, HUD_PRINTTALK, ZM_PREFIX "Mother zombies: %s", names.c_str());
+}
+
+CON_COMMAND_CHAT(zmmotherzombies, "- Print the current mother zombies to chat")
+{
+	ZMMotherZombiesCommand(player);
+}
+
+CON_COMMAND_CHAT(zmmz, "- Print the current mother zombies to chat")
+{
+	ZMMotherZombiesCommand(player);
 }

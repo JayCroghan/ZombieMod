@@ -94,6 +94,7 @@ DECLARE_DETOUR(CCSGameRules_GoToIntermission, Detour_CCSGameRules_GoToIntermissi
 CConVar<bool> g_cvarBlockMolotovSelfDmg("cs2f_block_molotov_self_dmg", FCVAR_NONE, "Whether to block self-damage from molotovs", false);
 CConVar<bool> g_cvarBlockAllDamage("cs2f_block_all_dmg", FCVAR_NONE, "Whether to block all damage to players", false);
 CConVar<bool> g_cvarFixBlockDamage("cs2f_fix_block_dmg", FCVAR_NONE, "Whether to fix block-damage on players", false);
+CConVar<float> g_cvarPropDamageScale("cs2f_prop_dmg_scale", FCVAR_NONE, "Multiplier on prop damage", 1.0f, true, 0.0f, false, 0.0f);
 
 int64 FASTCALL Detour_CBaseEntity_TakeDamageOld(CBaseEntity* pThis, CTakeDamageInfo* pInfo, CTakeDamageResult* pResult)
 {
@@ -154,6 +155,12 @@ int64 FASTCALL Detour_CBaseEntity_TakeDamageOld(CBaseEntity* pThis, CTakeDamageI
 	// Fix disconnected players grenades being able to damage teammates
 	if (!V_strcasecmp(pszInflictorClass, "hegrenade_projectile") && pInfo->m_AttackerInfo.m_bIsPawn && pInfo->m_AttackerInfo.m_nTeam == 0)
 		return 1;
+
+	if (!V_strncasecmp(pszInflictorClass, "prop_physics", 12))
+	{
+		pInfo->m_flDamage *= g_cvarPropDamageScale.Get();
+		pInfo->m_flTotalledDamage *= g_cvarPropDamageScale.Get();
+	}
 
 	// maybe call in flow
 	CTakeDamageResult damageResult(0);
@@ -442,14 +449,14 @@ bool PrepareMapSetModel(CBaseModelEntity* pModel)
 	return true;
 }
 
-bool FASTCALL Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSymbolLarge* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value, int nOutputID, void* a7, void* a8)
+bool FASTCALL Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSymbolLarge* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value, void* a6, void* a7)
 {
 	VPROF_SCOPE_BEGIN("Detour_CEntityIdentity_AcceptInput");
 
 	bool result; 
 	if (g_cvarEnableZR.Get())
 	{
-		result = ZR_Detour_CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value, nOutputID);
+		result = ZR_Detour_CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value);
 
 		if (!result)
 			return result;
@@ -457,7 +464,7 @@ bool FASTCALL Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSym
 	
 	if (g_cvarZMEnable.Get())
 	{
-		result = ZM_Detour_CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value, nOutputID);
+		result = ZM_Detour_CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value);
 		
 		if (!result)
 			return result;
@@ -546,7 +553,7 @@ bool FASTCALL Detour_CEntityIdentity_AcceptInput(CEntityIdentity* pThis, CUtlSym
 
 	VPROF_SCOPE_END();
 
-	return CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value, nOutputID, a7, a8);
+	return CEntityIdentity_AcceptInput(pThis, pInputName, pActivator, pCaller, value, a6, a7);
 }
 
 CConVar<bool> g_cvarBlockNavLookup("cs2f_block_nav_lookup", FCVAR_NONE, "Whether to block navigation mesh lookup, improves server performance but breaks bot navigation", false);
@@ -559,6 +566,8 @@ void* FASTCALL Detour_CNavMesh_GetNearestNavArea(int64_t unk1, float* unk2, unsi
 	return CNavMesh_GetNearestNavArea(unk1, unk2, unk3, unk4, unk5, unk6, unk7);
 }
 
+CConVar<int> g_cvarAllowDuckSpam("cs2f_allow_duck_spam", FCVAR_NONE, "Whether to allow duck spamming by removing the duck slowdown, clients will only partially predict [0 = disabled, 1 = both teams, 2 = T only, 3 = CT only]", 0, true, 0, true, CS_TEAM_CT);
+
 void FASTCALL Detour_ProcessMovement(CCSPlayer_MovementServices* pThis, void* pMove)
 {
 	CCSPlayerPawn* pPawn = pThis->GetPawn();
@@ -570,6 +579,11 @@ void FASTCALL Detour_ProcessMovement(CCSPlayer_MovementServices* pThis, void* pM
 
 	if (!pController || !pController->IsConnected())
 		return ProcessMovement(pThis, pMove);
+
+	int iAllowDuckSpam = g_cvarAllowDuckSpam.Get();
+
+	if ((iAllowDuckSpam == 1 || pPawn->m_iTeamNum() == iAllowDuckSpam) && pThis->m_flDuckSpeed() != 8.0f)
+		pThis->m_flDuckSpeed = 8.0f;
 
 	float flSpeedMod = pController->GetZEPlayer()->GetSpeedMod();
 
@@ -607,8 +621,7 @@ void* FASTCALL Detour_ProcessUsercmds(CCSPlayerController* pController, CUserCmd
 
 	for (int i = 0; i < numcmds; i++)
 	{
-		// Push fix only works properly if subtick movement is also disabled
-		if (g_cvarDisableSubtickMovement.Get() || g_cvarUseOldPush.Get())
+		if (g_cvarDisableSubtickMovement.Get())
 		{
 			auto subtickMoves = cmds[i].cmd.mutable_base()->mutable_subtick_moves();
 			auto iterator = subtickMoves->begin();

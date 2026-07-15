@@ -40,7 +40,7 @@
 
 #include "tier0/memdbgon.h"
 
-CUtlVector<CGameEventListener*> g_vecEventListeners;
+std::vector<CGameEventListener*> g_vecEventListeners;
 
 void RegisterEventListeners()
 {
@@ -49,10 +49,8 @@ void RegisterEventListeners()
 	if (bRegistered || !g_gameEventManager)
 		return;
 
-	FOR_EACH_VEC(g_vecEventListeners, i)
-	{
-		g_gameEventManager->AddListener(g_vecEventListeners[i], g_vecEventListeners[i]->GetEventName(), true);
-	}
+	for (CGameEventListener* pListener : g_vecEventListeners)
+		g_gameEventManager->AddListener(pListener, pListener->GetEventName(), true);
 
 	bRegistered = true;
 }
@@ -62,12 +60,10 @@ void UnregisterEventListeners()
 	if (!g_gameEventManager)
 		return;
 
-	FOR_EACH_VEC(g_vecEventListeners, i)
-	{
-		g_gameEventManager->RemoveListener(g_vecEventListeners[i]);
-	}
+	for (CGameEventListener* pListener : g_vecEventListeners)
+		g_gameEventManager->RemoveListener(pListener);
 
-	g_vecEventListeners.Purge();
+	g_vecEventListeners.clear();
 }
 
 GAME_EVENT_F(round_prestart)

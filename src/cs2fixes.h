@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "cs2_sdk/netmessages.h"
 #include "engine/igameeventsystem.h"
 #include "entity/cgamerules.h"
 #include "gamesystems/spawngroup_manager.h"
@@ -95,6 +96,7 @@ public: // hooks
 	bool Hook_OnTakeDamage_Alive(CTakeDamageResult* pDamageResult);
 	void Hook_PhysicsTouchShuffle(CUtlVector<TouchLinked_t>* pList, bool unknown);
 	void Hook_CCSPlayerPawn_Teleport(const Vector* pPosition, const QAngle* pAngles, const Vector* pVelocity);
+	void Hook_CCSPlayerPawn_Teleport_Post(const Vector* pPosition, const QAngle* pAngles, const Vector* pVelocity);
 #ifdef PLATFORM_WINDOWS
 	Vector* Hook_GetEyePosition(Vector*);
 	QAngle* Hook_GetEyeAngles(QAngle*);
@@ -106,7 +108,8 @@ public: // hooks
 	void Hook_DropWeaponPost(CBasePlayerWeapon* pWeapon, Vector* pVecTarget, Vector* pVelocity);
 	int Hook_LoadEventsFromFile(const char* filename, bool bSearchAll);
 	void Hook_SetGameSpawnGroupMgr(IGameSpawnGroupMgr* pSpawnGroupMgr);
-	void Hook_SpawnPost(int nCount, const EntitySpawnInfo_t* pInfo);
+	bool Hook_ProcessVoiceData(const CCLCMsg_VoiceData_t& msg);
+	void Hook_Spawn(int nCount, const EntitySpawnInfo_t* pInfo);
 
 public: // MetaMod API
 	void* OnMetamodQuery(const char* iface, int* ret);
