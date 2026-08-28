@@ -53,6 +53,7 @@ class Vector;
 class QAngle;
 class CEconItemView;
 class CCSGameRules;
+class CBeam;
 struct CTakeDamageResult;
 
 // Add callback functions to this map that wish to hook into Detour_CEntityIOOutput_FireOutputInternal
@@ -86,7 +87,6 @@ bool SetupFireOutputInternalDetour();
 
 void FASTCALL Detour_UTIL_SayTextFilter(IRecipientFilter&, const char*, CCSPlayerController*, uint64);
 void FASTCALL Detour_UTIL_SayText2Filter(IRecipientFilter&, CCSPlayerController*, uint64, const char*, const char*, const char*, const char*, const char*);
-bool FASTCALL Detour_IsHearingClient(void*, int);
 void FASTCALL Detour_TriggerPush_Touch(CTriggerPush* pPush, CBaseEntity* pOther);
 int64 FASTCALL Detour_CBaseEntity_TakeDamageOld(CBaseEntity* pThis, CTakeDamageInfo* pInfo, CTakeDamageResult* pResult);
 bool FASTCALL Detour_CCSPlayer_WeaponServices_CanUse(CCSPlayer_WeaponServices*, CBasePlayerWeapon*);
@@ -117,3 +117,6 @@ AcquireResult FASTCALL Detour_CCSPlayer_ItemServices_CanAcquire(CCSPlayer_ItemSe
 void FASTCALL Detour_CS_Script_SetModel(uint64_t unk1);
 void FASTCALL Detour_CBaseModelEntity_SetModel(CBaseModelEntity* pModel, const char* pszModel);
 void FASTCALL Detour_CCSGameRules_GoToIntermission(CCSGameRules* pThis, bool bAbortedMatch);
+void FASTCALL Detour_SetBeamOrigin(CBeam* pThis, const Vector* pVecWorldPosition);
+void FASTCALL Detour_SetBeamEndPos(CBeam* pThis, const Vector* pVecWorldPosition);
+bool FASTCALL Detour_IsCommandWhitelisted(void* pAddonManager, const char* pszCommandName);
