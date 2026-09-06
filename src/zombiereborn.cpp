@@ -138,7 +138,7 @@ ZRModelEntry::ZRModelEntry(ordered_json jsonModelEntry) :
 	vecSkins.push_back(0); // key missing, set default
 };
 
-// seperate parsing to adminsystem's ParseFlags as making class 'z' flagged would make it available to players with non-zero flag
+// separate parsing to adminsystem's ParseFlags as making class 'z' flagged would make it available to players with non-zero flag
 uint64 ZRClass::ParseClassFlags(const char* pszFlags)
 {
 	uint64 flags = 0;

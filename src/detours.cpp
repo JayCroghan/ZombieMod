@@ -287,7 +287,7 @@ void SayChatMessageWithTimer(IRecipientFilter& filter, const char* pText, CCSPla
 	}
 	filteredText[uiFilteredTextLength] = '\0';
 
-	// Split console message into words seperated by the space character
+	// Split console message into words separated by the space character
 	CSplitString words(filteredText, " ");
 
 	// Word count includes the first word "Console:" at index 0, first relevant word is at index 1
