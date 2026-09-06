@@ -42,7 +42,7 @@ public:
 	{
 	}
 
-	// FireEvent is called by EventManager if event just occured
+	// FireEvent is called by EventManager if event just occurred
 	// KeyValue memory will be freed by manager if not needed anymore
 	void FireGameEvent(IGameEvent* event) override
 	{
